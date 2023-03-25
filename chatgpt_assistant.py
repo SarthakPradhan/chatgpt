@@ -30,7 +30,7 @@ def generate_response(prompt):
 
 
 # Start the voice input loop
-listen_duration = 7
+listen_duration = 6
 while True:
     # Use the microphone to listen for input
     with sr.Microphone() as source:
