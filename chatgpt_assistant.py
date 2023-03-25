@@ -30,11 +30,12 @@ def generate_response(prompt):
 
 
 # Start the voice input loop
+listen_duration = 7
 while True:
     # Use the microphone to listen for input
     with sr.Microphone() as source:
         print("Listening...")
-        audio = r.record(source, duration=7)
+        audio = r.record(source, duration=listen_duration)
 
     try:
         # Use the speech recognition engine to transcribe the audio
