@@ -17,7 +17,7 @@
 			var input_text = $('#input_text').val();
 			$.post('/text_function', {input_text: input_text}, function(data) {
 				$('#response_text2').text(data.text);
-				$('#response_audio').attr('src', '');
+				$('#response_audio').attr('src', 'data:audio/mpeg;base64,' + data.audio);
 			});
 		}
 	</script>
@@ -28,7 +28,7 @@
 	<button onclick="speechFunction()">Speak</button>
 	<p>Response:</p>
 	<p id="response_text1"></p>
-	<audio id="response_audio" controls></audio>
+	<audio id="response_audio" controls autoplay></audio>
 
 	<h2>Text Input</h2>
 	<input type="text" id="input_text">

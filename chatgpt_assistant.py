@@ -87,7 +87,13 @@ def text_function():
     response = generate_response(input_text)
     print("ChatGPT: ", response)
 
-    return {'text': response}
+    engine.save_to_file(response, 'output.mp3')
+    engine.runAndWait()
+    with io.open('output.mp3', 'rb') as f:
+        audio_bytes = f.read()
+    audio_base64 = base64.b64encode(audio_bytes).decode('ascii')
+
+    return {'text': response, 'audio': audio_base64}
 
 if __name__ == "__main__":
     app.run(debug=True)
