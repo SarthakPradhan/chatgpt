@@ -13,7 +13,6 @@ root.title("ChatGPT")
 
 
 def generate_response(prompt):
-
     # Load the API key and organization name from the configuration file
 
     try:
@@ -40,7 +39,6 @@ def generate_response(prompt):
 
 # Define the send_message function
 def send_message():
-
     input_text = input_box.get()
     response_text = generate_response(input_text)
     output_box.insert(tk.END, "You: " + input_text + "\n")
@@ -91,8 +89,6 @@ def save_settings(api_key, org_name):
     with open("settings.json", "w") as f:
         json.dump(settings, f)
     settings_window.destroy()
-
-
 
 
 # Create the settings button
