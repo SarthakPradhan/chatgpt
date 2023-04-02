@@ -1,3 +1,8 @@
+'''
+Author: Sarthak Pradhan
+Date: 03/23/2023
+Description: Interface with openai to respond to queries and complete tasks
+'''
 import speech_recognition as sr
 import pyttsx3
 import openai
