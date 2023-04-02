@@ -1,8 +1,10 @@
 import speech_recognition as sr
 import pyttsx3
 import openai
+import io
+import base64
 import time
-from flask import Flask
+from flask import Flask, render_template, request, jsonify
 import os
 from dotenv import load_dotenv
 
@@ -30,36 +32,51 @@ def generate_response(prompt):
     )
     return response.choices[0].text.strip()
 
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-def main():
+@app.route('/my_function', methods=['POST'])
+def my_function():
     # Start the voice input loop
     listen_duration = 6
-    while True:
-        # Use the microphone to listen for input
-        with sr.Microphone() as source:
-            print("Listening...")
-            audio = r.record(source, duration=listen_duration)
 
-        try:
-            # Use the speech recognition engine to transcribe the audio
-            text = r.recognize_google(audio)
-            print("You said: ", text)
 
-            # Generate a response using the ChatGPT model
-            response = generate_response(text)
-            print("ChatGPT: ", response)
+    # Use the microphone to listen for input
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = r.record(source, duration=listen_duration)
 
-            # Use the text-to-speech engine to speak the response
-            engine.say(response)
-            engine.runAndWait()
+    try:
+        # Use the speech recognition engine to transcribe the audio
+        transcription = r.recognize_google(audio)
+        print("You said: ", transcription)
 
-        except sr.UnknownValueError:
-            print("Could not understand audio")
-        except sr.RequestError as e:
-            print("Could not request results: {0}".format(e))
+        # Generate a response using the ChatGPT model
+        response = generate_response(transcription)
+        print("ChatGPT: ", response)
 
-        # Pause for a moment to avoid spamming the OpenAI API
-        time.sleep(1)
+        # Use the transcription-to-speech engine to speak the response
+
+
+        #engine.say(response)
+        #engine.runAndWait()
+
+    except sr.UnknownValueError:
+        response = "Could not understand audio"
+        print("Could not understand audio")
+
+    except sr.RequestError as e:
+        response = "Could not request results: {0}".format(e)
+        print("Could not request results: {0}".format(e))
+
+    engine.save_to_file(response, 'output.mp3')
+    engine.runAndWait()
+    with io.open('output.mp3', 'rb') as f:
+        audio_bytes = f.read()
+    audio_base64 = base64.b64encode(audio_bytes).decode('ascii')
+
+    return {'text': response, 'audio': audio_base64}
 
 
 if __name__ == "__main__":

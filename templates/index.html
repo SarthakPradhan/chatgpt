@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Speech Recognition Demo</title>
+    <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f1f1f1;
+    }
+
+    #my-button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: block;
+        margin: 40px auto;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    #output {
+        margin: 40px;
+        font-size: 20px;
+        border: 1px solid #ccc;
+        padding: 20px;
+    }
+    </style>
+</head>
+<body>
+    <h1>Speech Recognition Demo</h1>
+    <button id="my-button">Click Me</button>
+    <div id="output"></div>
+    <script>
+    document.getElementById("my-button").addEventListener("click", function() {
+        const button = document.getElementById("my-button");
+        button.disabled = true;
+        button.innerHTML = "Listening...";
+        fetch('/my_function', {
+            method: 'POST'
+        })
+        .then(response => response.json())
+        .then(data => {
+            const audioBytes = atob(data.audio);
+            const audioBlob = new Blob([audioBytes], {type: 'audio/mpeg'});
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audio = new Audio(audioUrl);
+            audio.play();
+            const text = data.text;
+            document.getElementById("output").innerHTML = text;
+            button.disabled = false;
+            button.innerHTML = "Click Me";
+        });
+    });
+    </script>
+</body>
+</html>
