@@ -9,16 +9,18 @@ import os
 from dotenv import load_dotenv
 
 load_dotenv()
+
 # Set up the speech recognition engine
 r = sr.Recognizer()
 
 # Set up the text-to-speech engine
 engine = pyttsx3.init()
-app = Flask(__name__)
+
 # Set up the OpenAI API
 openai.api_key = os.getenv("OPENAI_API_KEY")
 model_engine = "text-davinci-002"
 
+app = Flask(__name__)
 
 # Define a function to generate a response
 def generate_response(prompt):
@@ -36,11 +38,10 @@ def generate_response(prompt):
 def index():
     return render_template('index.html')
 
-@app.route('/my_function', methods=['POST'])
-def my_function():
+@app.route('/speech_function', methods=['POST'])
+def speech_function():
     # Start the voice input loop
     listen_duration = 6
-
 
     # Use the microphone to listen for input
     with sr.Microphone() as source:
@@ -57,10 +58,8 @@ def my_function():
         print("ChatGPT: ", response)
 
         # Use the transcription-to-speech engine to speak the response
-
-
-        #engine.say(response)
-        #engine.runAndWait()
+        # engine.say(response)
+        # engine.runAndWait()
 
     except sr.UnknownValueError:
         response = "Could not understand audio"
@@ -78,6 +77,17 @@ def my_function():
 
     return {'text': response, 'audio': audio_base64}
 
+@app.route('/text_function', methods=['POST'])
+def text_function():
+    # Get the input text from the form
+    input_text = request.form.get('input_text')
+    print("You typed: ", input_text)
+
+    # Generate a response using the ChatGPT model
+    response = generate_response(input_text)
+    print("ChatGPT: ", response)
+
+    return {'text': response}
 
 if __name__ == "__main__":
     app.run(debug=True)

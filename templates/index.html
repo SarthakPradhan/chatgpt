@@ -1,59 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Speech Recognition Demo</title>
-    <style>
-    body {
-        font-family: Arial, sans-serif;
-        background-color: #f1f1f1;
-    }
+	<title>ChatGPT</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	<script>
+		function speechFunction() {
+			$('#response_text1').text("Listening...");
+			$('#response_audio').attr('src', '');
+			$.post('/speech_function', function(data) {
+				$('#response_text1').text(data.text);
+				$('#response_audio').attr('src', 'data:audio/mpeg;base64,' + data.audio);
+			});
+		}
 
-    #my-button {
-        background-color: #4CAF50;
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: block;
-        margin: 40px auto;
-        font-size: 16px;
-        cursor: pointer;
-    }
-
-    #output {
-        margin: 40px;
-        font-size: 20px;
-        border: 1px solid #ccc;
-        padding: 20px;
-    }
-    </style>
+		function textFunction() {
+			var input_text = $('#input_text').val();
+			$.post('/text_function', {input_text: input_text}, function(data) {
+				$('#response_text2').text(data.text);
+				$('#response_audio').attr('src', '');
+			});
+		}
+	</script>
 </head>
 <body>
-    <h1>Speech Recognition Demo</h1>
-    <button id="my-button">Click Me</button>
-    <div id="output"></div>
-    <script>
-    document.getElementById("my-button").addEventListener("click", function() {
-        const button = document.getElementById("my-button");
-        button.disabled = true;
-        button.innerHTML = "Listening...";
-        fetch('/my_function', {
-            method: 'POST'
-        })
-        .then(response => response.json())
-        .then(data => {
-            const audioBytes = atob(data.audio);
-            const audioBlob = new Blob([audioBytes], {type: 'audio/mpeg'});
-            const audioUrl = URL.createObjectURL(audioBlob);
-            const audio = new Audio(audioUrl);
-            audio.play();
-            const text = data.text;
-            document.getElementById("output").innerHTML = text;
-            button.disabled = false;
-            button.innerHTML = "Click Me";
-        });
-    });
-    </script>
+	<h1>ChatGPT</h1>
+	<h2>Speech Input</h2>
+	<button onclick="speechFunction()">Speak</button>
+	<p>Response:</p>
+	<p id="response_text1"></p>
+	<audio id="response_audio" controls></audio>
+
+	<h2>Text Input</h2>
+	<input type="text" id="input_text">
+	<button onclick="textFunction()">Send</button>
+	<p>Response:</p>
+	<p id="response_text2"></p>
 </body>
 </html>
